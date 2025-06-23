@@ -102,6 +102,7 @@ add ES7 react native extension for vscode
 
 ## Basics
 
+```js
 - <Image source = {{uri: ""}} style ={{width: 100, height:100}} />
 - <TextInput placeholder="Your email" secureTextEntry = {false}/>
 - <View></View>
@@ -123,6 +124,6 @@ return (
 </SafeAreaView>
 
 )
-
+```
 - In web dev flex is in row direction by default while in mobile dev, flex is column direction by default.
 
