@@ -127,3 +127,19 @@ return (
 ```
 - In web dev flex is in row direction by default while in mobile dev, flex is column direction by default.
 
+
+## Auth
+
+```js
+return (
+<ClerkProvider>
+ <Slot />
+</ClerkProvider>
+)
+
+```
+
+## routes
+- app - (auth) - sign-in.jsx, _layout.jsx, sign-up.jsx, verify-email.jsx
+- app - (tabs) - index.jsx, _layout.jsx
+  
