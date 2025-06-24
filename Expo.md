@@ -130,6 +130,7 @@ return (
 
 ## Auth
 
+- Outlet / Slot
 ```js
 return (
 <ClerkProvider>
@@ -142,4 +143,23 @@ return (
 ## routes
 - app - (auth) - sign-in.jsx, _layout.jsx, sign-up.jsx, verify-email.jsx
 - app - (tabs) - index.jsx, _layout.jsx
+
+```js
+// Tab Navigator
+
+tabs/_layout.js
+
+- rnfe
+const {isSignedIn} = useAuth()
+if(!isSignedIn) return <Redirect href={"/(auth)/sign-in"} />
+return <Stack />
+
+
+auth/_layout.jsx
+- rnfe
+const {isSignedIn} = useAuth()
+if(!isSignedIn) return <Redirect href={"/"} />
+return <Stack />
+
+```
   
