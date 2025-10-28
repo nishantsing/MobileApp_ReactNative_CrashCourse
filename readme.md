@@ -8,6 +8,165 @@
 
 - rnfe
 
+## Local Storage
+- npm i @react-native-async-storage/async-storage 
+
+```tsx
+// get the user's choice
+AsyncStorage.getItem("darkMode").then((value) => {
+    if (value) setIsDarkMode(JSON.parse(value));
+});
+
+await AsyncStorage.setItem("darkMode", JSON.stringify(newMode));
+
+```
+
+## Context API
+- Usage is same as react. wrap your root layout.
+- refer useTheme and its usage for better understanding.
+
+- Provider is used to wrap the application and Context using used to create the context in child
+
+```jsx
+const styles = createStyles(colors)
+
+<TouchableOpacity onPress={() => toggleDarkMode()}><Text>Toggle the mode</Text></TouchableOpacity> // when you want to do multiple actions
+// and 
+<TouchableOpacity onPress={ toggleDarkMode}><Text>Toggle the mode</Text></TouchableOpacity> // clean for single action
+
+
+const createStyles = (colors: ColorScheme) => { // To make colors accessible to StyleSheet we used a wrapper function
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      backgroundColor: colors.bg
+    },
+    linkButton: {
+      borderWidth: 2,
+      borderColor: 'blue',
+      borderRadius: 10,
+      padding: 16,
+    }
+  })
+  return styles
+}
+
+```
+
+## Using Convex as DB (Supabase/ Firebase/ Appwrite)
+
+- npm i convex
+- npx convex dev -> running and syncing with convex server
+
+- you can also work on convex db and functions first and then start working on the frontend
+
+
+## Expo Linear
+- npx expo install expo-linear-gradient
+
+```ts
+// 1. convex/schema.ts
+import { defineSchema, defineTable } from "convex/server";
+
+import { v } from "convex/values"
+
+export default defineSchema({
+    todos: defineTable({
+        text: v.string(),
+        isCompleted: v.boolean()
+    }),
+    // users: defineTable({
+    //     fullName: v.string(),
+    //     isLoggedIn: v.boolean()
+    // })
+})
+
+// 2. convex/todos.ts
+/* Query -> Get
+Mutation -> create, update, delete  */
+
+import { query, mutation } from "./_generated/server"
+import { ConvexError, v } from "convex/values"
+
+export const getTodos = query({
+    args: {},
+    handler: async (ctx) => {
+        const todos = await ctx.db.query("todos").order("desc").collect()
+        // .take(50)
+        return todos
+    }
+})
+
+export const addTodo = mutation({
+    args: { text: v.string() },
+    handler: async (ctx, args) => {
+        const todoId = await ctx.db.insert("todos", {
+            text: args.text,
+            isCompleted: false
+        })
+
+        return todoId
+    }
+})
+
+export const toggleTodo = mutation({
+    args: { id: v.id("todos") },
+    handler: async (ctx, args) => {
+        const todo = await ctx.db.get(args.id)
+        if (!todo) throw new ConvexError("Todo not found!!!")
+
+        await ctx.db.patch(args.id, {
+            isCompleted: !todo.isCompleted
+        })
+
+    }
+})
+
+export const deleteTodo = mutation({
+    args: { id: v.id("todos") },
+    handler: async (ctx, args) => {
+        await ctx.db.delete(args.id)
+    }
+})
+
+export const updateTodo = mutation({
+    args: { id: v.id("todos"), text: v.string() },
+    handler: async (ctx, args) => {
+        await ctx.db.patch(args.id, {
+            text: args.text
+        })
+    }
+})
+
+export const clearAllTodos = mutation({
+    handler: async (ctx) => {
+        const todos = await ctx.db.query("todos").collect();
+
+        // Delete all todos
+        for (const todo of todos) {
+            await ctx.db.delete(todo._id)
+        }
+        return { deletedCount: todos.length }
+    }
+})
+
+//Usage 
+// Update your convex/react import like this:
+import { useQuery, useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+
+const todos = useQuery(api.todos.getTodos)
+console.log(todos)
+
+const addTodo = useMutation(api.todos.addTodo)
+const clearAllTodos = useMutation(api.todos.clearAllTodos)
+
+<TouchableOpacity onPress={() => addTodo({ text: "walk the dog" })}><Text>Add a new Todo</Text></TouchableOpacity>
+<TouchableOpacity onPress={() => clearAllTodos()}><Text>Clear All</Text></TouchableOpacity>
+```
+
 - [NativeWind - Tailwind for react native](https://www.nativewind.dev/docs/getting-started/installation)
 
 
