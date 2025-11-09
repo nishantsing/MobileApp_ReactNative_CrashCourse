@@ -36,9 +36,10 @@
 ## Building for local use
 - npx expo prebuild
 - cd android
-- ./gradlew assembleDebug
-- android/app/build/outputs/apk/debug/app-debug.apk
-- npx expo run:android
+- ./gradlew clean
+- ./gradlew assembleRelease - use this to create apk
+- ./gradlew assembleDebug - debug build apk which required metro to be running - dont use to create apk
+- android/app/build/outputs/apk/release/app-release.apk
 
 #### Installation
 - adb install android/app/build/outputs/apk/debug/app-debug.apk
