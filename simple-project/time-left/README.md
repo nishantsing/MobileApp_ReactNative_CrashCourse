@@ -25,6 +25,7 @@
 
 #### Local build without uploading to expo servers
 - eas build -p android --profile preview --local
+- ./build-android/output.apk
 
 ###### To install directly on your iPhone:
 
@@ -34,8 +35,10 @@
 
 ## Building for local use
 - npx expo prebuild
-- npx expo run:android
+- cd android
+- ./gradlew assembleDebug
 - android/app/build/outputs/apk/debug/app-debug.apk
+- npx expo run:android
 
 #### Installation
 - adb install android/app/build/outputs/apk/debug/app-debug.apk
