@@ -1,0 +1,90 @@
+// CountdownScreen.tsx
+import { Moon, Sun } from "lucide-react-native";
+import React, { useEffect, useState } from "react";
+import { Text, TouchableOpacity, View } from "react-native";
+import ConfettiCannon from "react-native-confetti-cannon";
+import { SafeAreaView } from "react-native-safe-area-context";
+import ProgressBar from "../components/ProgressBar";
+import useCountdowns, { TimeLeft } from "../hooks/useCountdowns";
+
+type BlockProps = {
+    title: string;
+    data?: TimeLeft;
+};
+
+export default function CountdownScreen() {
+    const { year, month, week, day } = useCountdowns();
+    const [dark, setDark] = useState(false);
+    const [fire, setFire] = useState(false);
+
+    useEffect(() => {
+        const list = [year, month, week, day];
+        if (!list.some(Boolean)) return;
+
+        const hitZero = list.some(
+            (t) =>
+                t &&
+                t.days === 0 &&
+                t.hours === 0 &&
+                t.minutes === 0 &&
+                t.seconds === 0
+        );
+
+        if (hitZero) {
+            setFire(true);
+            setTimeout(() => setFire(false), 3000);
+        }
+    }, [year, month, week, day]);
+
+    const Block = ({ title, data }: BlockProps) =>
+        data ? (
+            <View className="p-4 rounded-xl bg-white dark:bg-gray-800 w-full mb-4 shadow">
+                <Text className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    {title}
+                </Text>
+
+                <ProgressBar progress={data.progress} />
+
+                <Text className="mt-2 text-sm text-gray-600 dark:text-gray-300">
+                    {data.progress.toFixed(2)}%
+                </Text>
+
+                <View className="flex-row justify-between mt-3">
+                    <Text className="text-base text-gray-900 dark:text-white">{data.days}d</Text>
+                    <Text className="text-base text-gray-900 dark:text-white">{data.hours}h</Text>
+                    <Text className="text-base text-gray-900 dark:text-white">{data.minutes}m</Text>
+                    <Text className="text-base text-gray-900 dark:text-white">{data.seconds}s</Text>
+                </View>
+            </View>
+        ) : null;
+
+
+    return (
+        // ✅ FIX #1 — dark class only here
+        <View className={`flex-1 ${dark ? "dark bg-black" : "bg-white"}`}>
+
+            <SafeAreaView className="flex-1 p-6">
+
+                {fire && <ConfettiCannon count={200} origin={{ x: 180, y: -10 }} />}
+
+                <View className="flex-row justify-between items-center mb-6">
+                    <Text className="text-xl font-bold text-gray-900 dark:text-white">
+                        Countdowns
+                    </Text>
+
+                    <TouchableOpacity
+                        onPress={() => setDark((prev) => !prev)}
+                        className="p-2 rounded-full bg-gray-200 dark:bg-gray-700"
+                    >
+                        {dark ? <Sun size={20} color="white" /> : <Moon size={20} color="black" />}
+                    </TouchableOpacity>
+                </View>
+
+                <Block title="Day Ends In" data={day} />
+                <Block title="Week Ends In" data={week} />
+                <Block title="Month Ends In" data={month} />
+                <Block title="Year Ends In" data={year} />
+            </SafeAreaView>
+        </View>
+    );
+}

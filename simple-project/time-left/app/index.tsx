@@ -1,93 +1,90 @@
+// CountdownScreen.tsx
+import { Moon, Sun } from "lucide-react-native";
 import React, { useEffect, useState } from "react";
-import { Text, View } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
+import ConfettiCannon from "react-native-confetti-cannon";
 import { SafeAreaView } from "react-native-safe-area-context";
+import ProgressBar from "../components/ProgressBar";
+import useCountdowns, { TimeLeft } from "../hooks/useCountdowns";
 
-type YearStats = {
-  progress: number;
-  days: number;
-  hours: number;
-  minutes: number;
-  seconds: number;
+type BlockProps = {
+  title: string;
+  data?: TimeLeft;
 };
 
-function getYearStats(): YearStats {
-  const now = new Date();
-
-  // start of year in local timezone
-  const startOfYear = new Date(now.getFullYear(), 0, 1);
-
-  // end of year (Dec 31 23:59:59) in local timezone
-  const endOfYear = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
-
-  const total = endOfYear.getTime() - startOfYear.getTime();
-  const elapsed = now.getTime() - startOfYear.getTime();
-  const remaining = endOfYear.getTime() - now.getTime();
-
-  const progress = (elapsed / total) * 100;
-
-  const days = Math.floor(remaining / (1000 * 60 * 60 * 24));
-  const hours = Math.floor((remaining / (1000 * 60 * 60)) % 24);
-  const minutes = Math.floor((remaining / (1000 * 60)) % 60);
-  const seconds = Math.floor((remaining / 1000) % 60);
-
-  return { progress, days, hours, minutes, seconds };
-}
-
-export default function YearCountdown() {
-  const [{ progress, days, hours, minutes, seconds }, setYearStats] =
-    useState<YearStats>(getYearStats());
+export default function CountdownScreen() {
+  const { year, month, week, day } = useCountdowns();
+  const [dark, setDark] = useState(false);
+  const [fire, setFire] = useState(false);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setYearStats(getYearStats());
-    }, 1000);
+    const list = [year, month, week, day];
+    if (!list.some(Boolean)) return;
 
-    return () => clearInterval(interval);
-  }, []);
+    const hitZero = list.some(
+      (t) =>
+        t &&
+        t.days === 0 &&
+        t.hours === 0 &&
+        t.minutes === 0 &&
+        t.seconds === 0
+    );
 
-  return (
-    <SafeAreaView className="flex-1 justify-center">
-      <View className="p-6 rounded-2xl shadow-lg bg-gray-900 text-white w-11/12 self-center mt-10">
-        <Text className="text-2xl font-bold mb-4 text-center text-white">
-          {new Date().getFullYear()} Countdown
+    if (hitZero) {
+      setFire(true);
+      setTimeout(() => setFire(false), 3000);
+    }
+  }, [year, month, week, day]);
+
+  const Block = ({ title, data }: BlockProps) =>
+    data ? (
+      <View className={`p-4 rounded-xl ${dark ? "bg-gray-800" : " bg-white"} w-full mb-4 shadow`}>
+        <Text className={`text-lg font-semibold ${dark ? "text-white" : "text-gray-900"} mb-2`}>
+          {title}
         </Text>
 
-        {/* Progress Bar */}
-        <View className="w-full bg-gray-700 rounded-full h-4 mb-3 overflow-hidden">
-          <View
-            className="bg-green-500 h-4 rounded-full"
-            style={{ width: `${progress}%` }}
-          />
-        </View>
+        <ProgressBar progress={data.progress} />
 
-        <Text className="text-sm text-gray-300 mb-4 text-center">
-          {progress.toFixed(2)}% of the year completed
+        <Text className={`mt-2 text-sm ${dark ? "text-gray-300" : "text-gray-600"}`}>
+          {data.progress.toFixed(2)}%
         </Text>
 
-        {/* Countdown Timer */}
-        <View className="flex-row justify-center gap-6 ">
-          <View className="items-center">
-            <Text className="text-3xl font-bold text-white">{days}</Text>
-            <Text className="text-gray-400 text-sm">Days</Text>
-          </View>
-
-          <View className="items-center">
-            <Text className="text-3xl font-bold text-white">{hours}</Text>
-            <Text className="text-gray-400 text-sm">Hrs</Text>
-          </View>
-
-          <View className="items-center">
-            <Text className="text-3xl font-bold text-white">{minutes}</Text>
-            <Text className="text-gray-400 text-sm">Min</Text>
-          </View>
-
-          <View className="items-center">
-            <Text className="text-3xl font-bold text-white">{seconds}</Text>
-            <Text className="text-gray-400 text-sm">Sec</Text>
-          </View>
+        <View className="flex-row justify-between mt-3">
+          <Text className={`text-base ${dark ? "text-white" : "text-gray-900"}`}>{data.days}d</Text>
+          <Text className={`text-base ${dark ? "text-white" : "text-gray-900"}`}>{data.hours}h</Text>
+          <Text className={`text-base ${dark ? "text-white" : "text-gray-900"}`}>{data.minutes}m</Text>
+          <Text className={`text-base ${dark ? "text-white" : "text-gray-900"}`}>{data.seconds}s</Text>
         </View>
       </View>
-    </SafeAreaView>
+    ) : null;
 
+
+  return (
+    // ✅ FIX #1 — dark class only here
+    <View className={`flex-1 ${dark ? "dark bg-black" : "bg-white"}`}>
+
+      <SafeAreaView className="flex-1 p-6">
+
+        {fire && <ConfettiCannon count={200} origin={{ x: 180, y: -10 }} />}
+
+        <View className="flex-row justify-between items-center mb-6">
+          <Text className={`text-xl font-bold ${dark ? "text-white" : "text-gray-900"}`}>
+            Countdowns
+          </Text>
+
+          <TouchableOpacity
+            onPress={() => setDark((prev) => !prev)}
+            className="p-2 rounded-full bg-gray-200 dark:bg-gray-700"
+          >
+            {dark ? <Sun size={20} color="white" /> : <Moon size={20} color="black" />}
+          </TouchableOpacity>
+        </View>
+
+        <Block title="Day Ends In" data={day} />
+        <Block title="Week Ends In" data={week} />
+        <Block title="Month Ends In" data={month} />
+        <Block title="Year Ends In" data={year} />
+      </SafeAreaView>
+    </View>
   );
 }
