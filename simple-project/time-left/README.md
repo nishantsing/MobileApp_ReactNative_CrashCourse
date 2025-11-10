@@ -11,6 +11,85 @@
 - [Follow These Docs Steps from Nativewind](https://www.nativewind.dev/docs/getting-started/installation)
 - npx tailwindcss init
 
+## Using Icons for dark and light mode
+
+- import { Moon, Sun } from "lucide-react-native";
+- <Sun size={20} color="white" />  | <Moon size={20} color="black" />
+
+
+## Using ConfettiCannon to show celebration
+
+- import ConfettiCannon from "react-native-confetti-cannon";
+
+## Storing User Preferences of dark and light mode
+- expo-secure-store
+```tsx
+// npx expo install expo-secure-store
+
+//utils
+import * as SecureStore from "expo-secure-store";
+
+export async function saveTheme(value: "light" | "dark") {
+  await SecureStore.setItemAsync("theme", value);
+}
+
+export async function loadTheme() {
+  return await SecureStore.getItemAsync("theme");
+}
+
+
+// Main file
+ const [hydrated, setHydrated] = useState(false);
+// Load theme once
+  useEffect(() => {
+    (async () => {
+      const storedTheme = await loadTheme();
+      if (storedTheme === "dark") setDark(true);
+      setHydrated(true);
+    })();
+  }, []);
+
+  // Toggle theme and save
+  const toggleDark = async () => {
+    const next = !dark;
+    setDark(next);
+    await saveTheme(next ? "dark" : "light");
+  };
+
+ if (!hydrated) return <View className="flex-1 bg-black" />;
+<TouchableOpacity
+    onPress={toggleDark}
+    className="p-2 rounded-full bg-gray-200 dark:bg-gray-700"
+  >
+    {dark ? <Sun size={20} color="white" /> : <Moon size={20} color="black" />}
+  </TouchableOpacity>
+</View>
+
+```
+
+- expo-storage
+```tsx
+import { Storage } from 'expo-storage';
+
+export async function saveTheme(theme: string) {
+  await Storage.setItem({ key: "theme", value: theme });
+}
+
+export async function loadTheme() {
+  return await Storage.getItem({ key: "theme" });
+}
+
+```
+
+- expo-mmkv
+- async storage(not built in expo) - slow/not encrypted
+```tsx
+
+// expo install @react-native-async-storage/async-storage
+import AsyncStorage from "@react-native-async-storage/async-storage";
+await AsyncStorage.getItem("theme");
+await AsyncStorage.setItem("theme", newTheme);
+```
 
 ## Building for App store
 
@@ -48,7 +127,7 @@
 - ./gradlew clean
 - ./gradlew assembleRelease - use this to create apk
   
-  
+
 #### Installation
 - adb install android/app/build/outputs/apk/debug/app-debug.apk
 
