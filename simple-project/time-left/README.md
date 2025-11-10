@@ -41,6 +41,14 @@
 - ./gradlew assembleDebug - debug build apk which required metro to be running - dont use to create apk
 - android/app/build/outputs/apk/release/app-release.apk
 
+## Building again after some change
+- npx expo prebuild --clean
+- npx expo prebuild
+- cd android
+- ./gradlew clean
+- ./gradlew assembleRelease - use this to create apk
+  
+  
 #### Installation
 - adb install android/app/build/outputs/apk/debug/app-debug.apk
 
