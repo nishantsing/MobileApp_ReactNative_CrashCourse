@@ -1,5 +1,22 @@
 # Expo app with Nativewind
 
+## Building a very simple year lapse UX application on Expo(RN) + Nativewind and building it to get apk
+
+### UX
+- There are 3 versions of UX.
+  
+#### V1 - Display Days left for current year to complete
+<img src="./screenshots/year-lapse-v1.jpeg" height="400px"></img>
+
+#### V2 - Display a timer to indicate time left for current year to complete
+<img src="./screenshots/year-lapse-v2.jpeg" height="400px"></img>
+
+
+#### V3 - Display a timer to indicate time left for current day, week, month, year to complete with a Confetti celebration with a light and dark mode.
+<img src="./screenshots/year-lapse-v3-light.jpeg" height="400px"></img>
+<img src="./screenshots/year-lapse-v3-dark.jpeg" height="400px"></img>
+
+
 ## Create an expo repo without the new file navigation but with nativewind
 - npm install -g create-expo-stack rn-new
 - npx rn-new --nativewind
