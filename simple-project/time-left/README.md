@@ -108,6 +108,71 @@ await AsyncStorage.getItem("theme");
 await AsyncStorage.setItem("theme", newTheme);
 ```
 
+
+## Running using expo dev client if your app has a native component like Map
+- we cannot use expo go anymore to run our app as its map which is a native component so we need to build it.
+- Also if you want to do debugging on your phone either connect it using usb debuggign or wireless debugging using adb command
+- In android/app/src/main/AndroidManifest.xml:
+- <meta-data
+  android:name="com.google.android.geo.API_KEY"
+  android:value="YOUR_GOOGLE_MAPS_KEY_HERE"/>
+
+- [Google Maps API](https://console.cloud.google.com/google/maps-apis)
+
+
+- adb devices, adb connect <ip:port>, adb pair <ip:port>
+- In app.json add  "scheme": "myapp",
+- npx expo prebuild 
+- npx expo run:android --device | the --device flag is used to build on your phone rather than emulator
+- npx expo start --dev-client | if you already have the dev client installed
+
+- **Note-** To avoid all this setup use expo-map
+
+## To run expo GO again after running expo dev
+1️⃣ Uninstall the Dev Client from your phone
+
+The custom dev client overrides the QR scanner and prevents Expo Go from opening your project.
+
+Go to Settings → Apps → YourApp → Uninstall
+
+2️⃣ Install Expo Go (fresh install)
+
+Download from Play Store:
+
+Expo Go → install clean, new version.
+
+3️⃣ Make sure your project is NOT prebuilt
+
+If your project contains native folders:
+
+/android
+/ios
+
+
+❌ Expo Go cannot load prebuilt/native projects.
+
+👉 Delete both folders manually:
+
+rm -rf android ios
+
+
+Then clear everything:
+
+npx expo start --clear
+
+4️⃣ Install expo-maps
+
+Expo Maps works with Expo Go starting SDK 51.
+
+npx expo install expo-maps
+
+5️⃣ Start the project in Expo Go
+
+Run:
+
+npx expo start
+
+Expo Go now fully supports expo-maps.
 ## Building for App store
 
 #### Set up EAS (Expo Application Services)
