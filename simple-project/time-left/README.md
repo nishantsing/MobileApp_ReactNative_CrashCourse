@@ -113,9 +113,22 @@ await AsyncStorage.setItem("theme", newTheme);
 - we cannot use expo go anymore to run our app as its map which is a native component so we need to build it.
 - Also if you want to do debugging on your phone either connect it using usb debuggign or wireless debugging using adb command
 - In android/app/src/main/AndroidManifest.xml:
-- <meta-data
+  ```xml
+ <meta-data
   android:name="com.google.android.geo.API_KEY"
   android:value="YOUR_GOOGLE_MAPS_KEY_HERE"/>
+  ```
+or in app.json
+
+```json
+"android": {
+  "config": {
+    "googleMaps": {
+      "apiKey": "YOUR_API_KEY"
+    }
+  }
+}
+```
 
 - [Google Maps API](https://console.cloud.google.com/google/maps-apis)
 
