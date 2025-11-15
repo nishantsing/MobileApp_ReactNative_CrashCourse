@@ -141,6 +141,27 @@ or in app.json
 
 - **Note-** To avoid all this setup use expo-map
 
+## To put restrictions on google api key usage
+In root
+- npx expo credentials:manager -p android
+or
+- keytool -list -v -keystore my-release-key.keystore -alias my-key-alias
+
+- add package name(com.something.something) and the generated SHA-1 in goog
+- Open Google Cloud Console api credentials
+
+
+✔ Restrict key
+
+Then enable only these:
+
+Maps SDK for Android
+
+(Optional) Places API
+
+(Optional) Directions API (server-side only)
+
+Disable everything else.
 ## To run expo GO again after running expo dev
 1️⃣ Uninstall the Dev Client from your phone
 
