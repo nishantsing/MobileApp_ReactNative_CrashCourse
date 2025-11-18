@@ -691,3 +691,79 @@ export default function MyMap() {
   }
 }
 ```
+- to hide it add to .env and then use it
+
+### Learnings
+
+##### There are 2 ways to build and test 
+- Expo Go - doesn't support native changes like map
+  - npx expo start 
+- Expo development environment where a app is installed after build
+  - npx expo prebuild --clean
+  - npx expo prebuild
+  - Before running below commmand connect your device using usb debugging or wireless debugging
+    - adb devices
+    - adb connect <ip:port>
+  - npx expo run:android --device
+  - this generates a apk on your device for debugging purpose its not a released apk.
+
+##### Protecting google api key
+  - generate 2 keystores for debug apk and as well as released apk this released one will be different from debug one
+
+###### debug
+- keytool -genkeypair -v -keystore "C:\Users\<you>\.android\debug.keystore" -storepass android -keypass android -alias androiddebugkey -keyalg RSA -keysize 2048 -validity 10000
+- store it inside android/app
+- if you create a release version using this key then uninstalling or sharing will change the SHA-1, so always use the release way for sharing.
+
+
+###### release
+- keytool -genkeypair -v -keystore my-release-key.keystore -alias my-key-alias -keyalg RSA -keysize 2048 -validity 10000
+- replace my-release-key.keystore, my-key-alias
+
+- store it inside android/app/my-release-key.keystore
+
+- You should NOT keep the passwords inside build.gradle.
+Instead, Android uses a file called gradle.properties which is not bundled in the APK.
+
+- android/gradle.properties
+MYAPP_STORE_FILE=my-release-key.keystore
+MYAPP_STORE_PASSWORD=your-store-pass
+MYAPP_KEY_ALIAS=my-key-alias
+MYAPP_KEY_PASSWORD=your-key-pass
+
+- android/app/build.gradle
+- Add gradle.properties to .gitignore or the android folder completely
+- in android/app/build.gradle
+android {
+    signingConfigs {
+        release {
+            storeFile file(MYAPP_STORE_FILE)
+            storePassword MYAPP_STORE_PASSWORD
+            keyAlias MYAPP_KEY_ALIAS
+            keyPassword MYAPP_KEY_PASSWORD
+        }
+    }
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            // other configs
+        }
+    }
+}
+
+- To get SHA1 
+  - keytool -list -v -keystore android/app/my-release-key.keystore -alias my-key-alias
+- add it to google console
+- remember even if you remove the SHA1 check and only have the android restriction on key it will still fail - map loads with yellowish screen witg google watermark
+- 
+
+- cd android
+- ./gradlew assembleRelease
+- android/app/build/outputs/apk/release/app-release.apk
+
+
+- android/app/debug.keystore        ← used only for debug mode
+- android/app/my-release-key.keystore  ← used only for release mode
+
+
+

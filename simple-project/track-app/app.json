@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "my-expo-app",
+    "name": "Route Tracker",
     "slug": "my-expo-app",
     "version": "1.0.0",
     "web": {
@@ -10,7 +10,7 @@
       "tsconfigPaths": true
     },
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/route-tracker.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -33,7 +33,7 @@
     "scheme": "myapp",
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/route-tracker.png",
         "backgroundColor": "#ffffff"
       },
       "permissions": [
@@ -41,7 +41,12 @@
         "ACCESS_FINE_LOCATION",
         "ACCESS_BACKGROUND_LOCATION"
       ],
-      "package": "com.anonymous.myexpoapp"
+      "package": "com.anonymous.myexpoapp",
+      "config": {
+        "googleMaps": {
+          "apiKey": "<api>"
+        }
+      }
     }
   }
 }
